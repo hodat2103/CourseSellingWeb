@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Play Video</title>
+</head>
+<body>
+<h1>Video Album của Vũ</h1>
+<iframe th:src="${embedUrl}" width="1500" height="900" frameborder="0" allowfullscreen></iframe>
+<video height="900" width="1500" controls>
+    <source th:src="${embedUrl}" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+</body>
+</html>
