@@ -24,5 +24,7 @@ public interface CourseVideoServiceImpl {
 
     CourseVideo getCourseVideoById(int courseVideoId) throws DataNotFoundException;
 
+    int countVideosByCourseId(int courseId);
+
     Map<String, Object> uploadFile(MultipartFile multipartFile) throws IOException;
 }

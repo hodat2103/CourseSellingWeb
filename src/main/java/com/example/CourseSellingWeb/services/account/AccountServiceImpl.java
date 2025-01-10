@@ -19,6 +19,9 @@ public interface AccountServiceImpl {
 
 
     void updatePassword(String newPassword, Integer accountId) throws DataNotFoundException;
+    void blockAccount(int accountId) throws DataNotFoundException;
+    void unblockAccount(int accountId) throws DataNotFoundException;
+
     List<Account> getAll();
     Account getAccountDetailsFromToken(String token) throws Exception;
 

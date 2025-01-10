@@ -2,6 +2,7 @@ package com.example.CourseSellingWeb.services.order;
 
 import com.example.CourseSellingWeb.dtos.OrderDTO;
 import com.example.CourseSellingWeb.exceptions.DataNotFoundException;
+import com.example.CourseSellingWeb.exceptions.InvalidParamException;
 import com.example.CourseSellingWeb.models.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @Service
 public interface OrderServiceImpl {
 
-    Order create(OrderDTO orderDTO) throws DataNotFoundException;
+    Order create(OrderDTO orderDTO) throws DataNotFoundException, InvalidParamException;
 
     Order update(int id, OrderDTO orderDTO) throws DataNotFoundException;
 

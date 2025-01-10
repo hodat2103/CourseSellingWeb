@@ -27,6 +27,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.prefix}/accounts")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class AccountController {
     private final AccountServiceImpl accountService;
@@ -128,9 +129,25 @@ public class AccountController {
                     .build());
         }
     }
+    @PutMapping("/block/{id}")
+    public ResponseEntity<ResponseObject> blockAccount(@PathVariable int id) throws DataNotFoundException {
+        accountService.blockAccount(id);
 
+        return ResponseEntity.ok(ResponseObject.builder()
+                        .message(localizationUtils.getLocalizationMessage("Block successfully"))
+                .status(HttpStatus.OK)
+                .build());
+    }
+    @PutMapping("/unblock/{id}")
+    public ResponseEntity<ResponseObject> unblockAccount(@PathVariable int id) throws DataNotFoundException {
+        accountService.unblockAccount(id);
 
-    @PostMapping("/details")
+        return ResponseEntity.ok(ResponseObject.builder()
+                .message(localizationUtils.getLocalizationMessage("Block successfully"))
+                .status(HttpStatus.OK)
+                .build());
+    }
+    @GetMapping("/details")
     public ResponseEntity<ResponseObject> getUserDetailsFromToken(@RequestHeader("Authorization") String authorizationHeader){
         try {
             String extractedToken = authorizationHeader.substring(7);
@@ -143,4 +160,21 @@ public class AccountController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("")
+    public ResponseEntity<ResponseObject> getAllAccounts(){
+        List<Account> accounts  = accountService.getAll();
+        if(accounts.isEmpty()){
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                            .message(localizationUtils.getLocalizationMessage(MessageKeys.LIST_EMPTY))
+                            .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        }
+
+        return ResponseEntity.ok(ResponseObject.builder()
+                        .data(accounts)
+                        .status(HttpStatus.OK)
+                .build());
+    }
+
 }

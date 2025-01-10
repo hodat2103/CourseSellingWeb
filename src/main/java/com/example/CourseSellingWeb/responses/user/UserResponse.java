@@ -26,12 +26,17 @@ public class UserResponse extends BaseResponse {
 
     private String address;
 
+    @JsonProperty("account_id")
+    private int accountId;
+
     public static UserResponse fromUser(User user){
         UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .address(user.getAddress())
+                .accountId(user.getAccount().getId())
                 .build();
         userResponse.setCreatedAt(user.getCreatedAt());
         userResponse.setUpdatedAt(user.getUpdatedAt());

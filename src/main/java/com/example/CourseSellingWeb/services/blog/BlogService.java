@@ -21,10 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +79,11 @@ public class BlogService implements BlogServiceImpl{
     public void delete(int id) {
         Optional<Blog> optionalBlog = blogRepository.findById(id);
         optionalBlog.ifPresent(blogRepository :: delete);
+    }
+
+    @Override
+    public List<Blog> findAll() {
+        return blogRepository.findAll();
     }
 
     @Override

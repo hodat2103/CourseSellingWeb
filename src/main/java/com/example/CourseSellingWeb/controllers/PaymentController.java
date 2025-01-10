@@ -7,6 +7,7 @@ import com.example.CourseSellingWeb.dtos.TransactionStatusDTO;
 import com.example.CourseSellingWeb.exceptions.DataNotFoundException;
 import com.example.CourseSellingWeb.models.Order;
 import com.example.CourseSellingWeb.respositories.OrderRepository;
+import com.example.CourseSellingWeb.services.user_course.UserCourseServiceImpl;
 import com.example.CourseSellingWeb.utils.MessageKeys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ import java.util.*;
 public class PaymentController {
     private final OrderRepository orderRepository;
     private final LocalizationUtils localizationUtils;
-
+    private final UserCourseServiceImpl userCourseService;
     @GetMapping("/create-payment")
     public ResponseEntity<?> createPayment(
             HttpServletRequest request,
@@ -57,7 +58,7 @@ public class PaymentController {
         vnp_Params.put("vnp_OrderInfo", orderId.toString());
         vnp_Params.put("vnp_OrderType", orderType);
         vnp_Params.put("vnp_Locale", "vn");
-        vnp_Params.put("vnp_ReturnUrl", VnPayConfig.vnp_ReturnUrl+orderId+"?order_id="+orderId);
+        vnp_Params.put("vnp_ReturnUrl", VnPayConfig.vnp_ReturnUrl+"?order_id="+orderId);
         vnp_Params.put("vnp_IpAddr", VnPayConfig.getIpAddress(request));
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -96,6 +97,8 @@ public class PaymentController {
         String vnp_SecureHash = VnPayConfig.hmacSHA512(VnPayConfig.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = VnPayConfig.vnp_PayUrl + "?" + queryUrl;
+
+
         PaymentDTO paymentDTO = PaymentDTO.builder()
                 .status("OK")
                 .message(localizationUtils.getLocalizationMessage(MessageKeys.PAYMENT_SUCCESSFULLY))
@@ -123,7 +126,7 @@ public class PaymentController {
             transactionStatusDTO = TransactionStatusDTO.builder()
                     .status("Accepted")
                     .message(localizationUtils.getLocalizationMessage(MessageKeys.PAYMENT_SUCCESSFULLY))
-                    .data("http://localhost:3000/order-confirm/"+orderId)
+                    .data("http://localhost:3000/mycourse/"+orderId)
                     .build();
 
             return ResponseEntity.ok(transactionStatusDTO);
@@ -138,9 +141,9 @@ public class PaymentController {
             order.setActive(false);
             this.orderRepository.save(order);
             return ResponseEntity.badRequest().body(TransactionStatusDTO.builder()
-//                    .status()
+                    .status("Failed")
                     .message(localizationUtils.getLocalizationMessage(MessageKeys.PAYMENT_FAILED))
-                    .data("")
+                    .data("http://localhost:3000/payment_return")  // Redirect to the homeclient page
                     .build());
         }
     }

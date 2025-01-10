@@ -21,6 +21,9 @@ public class MessageKeys {
     public static final String PAYMENT_SUCCESSFULLY ="user.payment.successfully";
     public static final String PAYMENT_FAILED ="user.payment.failed";
 
+    public static final String NOT_IMAGE = "management.upload.image.not_is_image";
+    public static final String EXPORT_EXCEL_FAILED = "management.export_excel.failed";
+
     public static final String REGISTER_SUCCESSFULLY ="user.register.register_successfully";
     public static final String REGISTER_FAILED ="user.register.register_failed";
     public static final String LOGIN_SUCCESSFULLY ="user.login.login_successfully";

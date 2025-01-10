@@ -5,6 +5,7 @@ import com.example.CourseSellingWeb.dtos.CourseDTO;
 import com.example.CourseSellingWeb.dtos.CourseDiscountDTO;
 import com.example.CourseSellingWeb.dtos.CourseVideoDTO;
 import com.example.CourseSellingWeb.exceptions.DataNotFoundException;
+import com.example.CourseSellingWeb.exceptions.InvalidParamException;
 import com.example.CourseSellingWeb.models.Course;
 import com.example.CourseSellingWeb.models.CourseVideo;
 import com.example.CourseSellingWeb.responses.ResponseObject;
@@ -37,10 +38,11 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-@CrossOrigin
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/courses")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class CourseController {
     private final CourseServiceImpl courseService;
     private final CourseVideoServiceImpl courseVideoService;
@@ -72,16 +74,7 @@ public class CourseController {
             return "errorPage";
         }
     }
-//    public String extractYouTubeVideoId1(String url) throws IllegalArgumentException {
-//        String pattern = "^(?:https?://)?(?:www\\.)?(?:youtube\\.com/(?:[^/\\n\\s]+/.+/|(?:v|e(?:mbed)?)|.*[?&]v=)|youtu\\.be/)([a-zA-Z0-9_-]{11})";
-//        Pattern compiledPattern = Pattern.compile(pattern);
-//        Matcher matcher = compiledPattern.matcher(url);
-//        if (matcher.find()) {
-//            return matcher.group(1);
-//        } else {
-//            throw new IllegalArgumentException("Invalid YouTube URL");
-//        }
-//    }
+
     // divide videoId from URL YouTube
     private String extractYouTubeVideoId(String url) {
         if (url.contains("v=")) {
@@ -93,20 +86,7 @@ public class CourseController {
         }
         throw new IllegalArgumentException("Invalid YouTube URL: " + url);
     }
-//    @PostMapping("/uploadVideo")
-//    public String uploadFile(@RequestParam("video") MultipartFile multipartFile, Model model) {
-//        try {
-//            Map<String, Object> uploadResult = courseVideoService.uploadVideoFile(multipartFile);
-//
-//            model.addAttribute("uploadResult", uploadResult);
-//
-//            return "Video uploaded successfully";
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            model.addAttribute("error", "Error uploading video: " + e.getMessage());
-//            return "Error uploading video";
-//        }
-//    }
+
     // pagination
     @GetMapping("")
     public ResponseEntity<CourseListResponse> searchCourses(
@@ -182,12 +162,18 @@ public class CourseController {
         }
     }
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourseById(@PathVariable("id") int courseId){
+    public ResponseEntity<ResponseObject> getCourseById(@PathVariable("id") int courseId){
         try {
             Course existsCourse = courseService.getCourseById(courseId);
-            return ResponseEntity.ok(CourseResponse.fromCourse(existsCourse));
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .data(CourseResponse.fromCourse(existsCourse))
+                            .status(HttpStatus.OK)
+                            .build());
         } catch (DataNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message(e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST).build());
         }
     }
     @GetMapping("/by-ids")
@@ -202,13 +188,21 @@ public class CourseController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+    @GetMapping("/count/{courseId}")
+    public ResponseEntity<Integer> countVideos(@PathVariable int courseId) throws DataNotFoundException {
+        int count = courseVideoService.countVideosByCourseId(courseId);
+        if(count <= 0){
+            throw new DataNotFoundException(MessageKeys.NOT_FOUND);
+        }
+        return ResponseEntity.ok(count);
+    }
     @PostMapping("")
     public ResponseEntity<ResponseObject> create(
             @Valid @RequestBody CourseDTO courseDTO,
-            @ModelAttribute(value = "url", binding = false) MultipartFile videoFile,
+            @ModelAttribute(value = "video_file", binding = false) MultipartFile videoFile,
+
             BindingResult result
-            ) throws DataNotFoundException, IOException {
+            ) throws DataNotFoundException, IOException, InvalidParamException {
 
             if(result.hasErrors()){
                 List<String> errorMessages = result.getFieldErrors()
@@ -232,7 +226,8 @@ public class CourseController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseObject> update(@PathVariable int id,
                                     @RequestBody CourseDTO courseDTO,
-                                    @ModelAttribute(value = "file", binding = false) MultipartFile videoFile){
+                                    @ModelAttribute(value = "video_file", binding = false) MultipartFile videoFile,
+                                                 @ModelAttribute(value = "image_file", binding = false) MultipartFile imageFile){
 
         try{
             Course updateCourse = courseService.update(id, courseDTO,videoFile);

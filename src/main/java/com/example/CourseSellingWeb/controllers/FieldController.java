@@ -74,10 +74,8 @@ public class FieldController {
     ) throws DataNotFoundException {
         Optional<Field> fieldOptional = fieldService.getFieldById(id);
         return ResponseEntity.ok(ResponseObject.builder()
-                        .data(fieldOptional
-                                .map(ResponseEntity::ok)
-                                .orElseThrow(() -> new DataNotFoundException(localizationUtils.getLocalizationMessage(MessageKeys.NOT_FOUND))))
-                        .status(HttpStatus.OK)
+                        .data(fieldOptional.get())
+                                 .status(HttpStatus.OK)
                 .build());
     }
 

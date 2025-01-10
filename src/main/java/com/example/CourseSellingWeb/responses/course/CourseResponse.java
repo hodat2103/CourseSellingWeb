@@ -25,8 +25,8 @@ public class CourseResponse extends BaseResponse {
 
     private BigDecimal price;
 
-    @JsonProperty("image_url")
-    private String imageUrl;
+//    @JsonProperty("image_url")
+//    private String imageUrl;
 
     @JsonProperty("demo_video_url")
     private String demoVideoUrl;
@@ -41,7 +41,7 @@ public class CourseResponse extends BaseResponse {
     private Integer employeeId;
 
     @JsonProperty("for_free")
-    private boolean forFree;
+    private Boolean forFree;
 
     public static CourseResponse fromCourse(Course course){
         CourseResponse courseResponse = CourseResponse.builder()
@@ -50,12 +50,12 @@ public class CourseResponse extends BaseResponse {
                 .mentorId(course.getMentor().getId())
                 .description(course.getDescription())
                 .price(course.getPrice())
-                .imageUrl(course.getImageUrl())
+//                .imageUrl(course.getImageUrl())
                 .demoVideoUrl(course.getDemoVideoUrl())
                 .fieldId(course.getField().getId())
                 .languageId(course.getLanguage().getId())
                 .employeeId(course.getEmployee().getId())
-                .forFree(course.isForFree())
+                .forFree(course.getForFree())
                 .build();
         courseResponse.setCreatedAt(course.getCreatedAt());
         courseResponse.setUpdatedAt(course.getUpdatedAt());

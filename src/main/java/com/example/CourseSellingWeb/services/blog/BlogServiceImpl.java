@@ -26,6 +26,8 @@ public interface BlogServiceImpl {
 
     void delete(int id);
 
+    List<Blog> findAll();
+
     Page<BlogResponse> getAllBlogs(int employeeId, LocalDateTime startOfDay, LocalDateTime endOfDay, String keyword, Pageable pageable);
 
     Optional<Blog> getById(int id) throws DataNotFoundException;

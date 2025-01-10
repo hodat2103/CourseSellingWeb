@@ -31,9 +31,9 @@ public class Course extends BaseEntity implements ExcelExportable{
 
     @Column(name = "price")
     private BigDecimal price;
-
-    @Column(name = "image_url", length = 300, unique = true)
-    private String imageUrl;
+//
+//    @Column(name = "image_url", length = 300, unique = true)
+//    private String imageUrl;
 
     @Column(name = "demo_video_url", length = 300, unique = true)
     private String demoVideoUrl;
@@ -59,14 +59,14 @@ public class Course extends BaseEntity implements ExcelExportable{
     private Employee employee;
 
     @Column(name = "for_free")
-    private boolean forFree;
+    private Boolean forFree;
 
     @OneToMany(mappedBy = "course")
     private List<CouponCondition> couponConditions;
 
     @Override
     public Object[] toExcelRow() {
-        return new Object[]{id,title,mentor.getName(),description,price,videoType,field.getName(),language.getName(),isForFree(),employee.getName()};
+        return new Object[]{id,title,mentor.getName(),description,price,videoType,field.getName(),language.getName(),forFree,employee.getName()};
     }
 
     @Override

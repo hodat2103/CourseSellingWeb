@@ -1,13 +1,14 @@
 package com.example.CourseSellingWeb.services.pdf;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.text.DateFormat;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,31 +17,48 @@ import java.util.Date;
 
 public class PDFService implements PDFServiceImpl{
     @Override
-    public void exportToPdf(HttpServletResponse response) throws IOException, DocumentException {
+    public void exportToPdf(HttpServletResponse response, String employeeName, BigDecimal totalRevenue, int totalCourseSold) throws IOException, DocumentException {
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, response.getOutputStream());
 
         document.open();
-        Font fontHeader = FontFactory.getFont(FontFactory.TIMES_BOLD);
-        fontHeader.setSize(22);
 
-        Paragraph headerParagraph = new Paragraph("## PDF Heading ##", fontHeader);
+        String fontPath = "src/main/resources/font/arial.ttf";
+        BaseFont baseFont = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font fontBold = new Font(baseFont, 14, Font.BOLD);
+
+        Font fontHeader = new Font(baseFont, 22, Font.BOLD);
+        Font fontParagraph = new Font(baseFont, 14, Font.NORMAL);
+
+        Paragraph headerParagraph = new Paragraph("BÁO CÁO THỐNG KÊ", fontHeader);
         headerParagraph.setAlignment(Paragraph.ALIGN_CENTER);
-
-        Font fontParagraph = FontFactory.getFont(FontFactory.TIMES);
-        fontParagraph.setSize(14);
-
-        Paragraph pdfParagraph = new Paragraph("", fontParagraph);
-        pdfParagraph.setAlignment(Paragraph.ALIGN_LEFT);
-
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
-        for(int i=0;i<=15;i++) {
-            pdfParagraph.add("Row: "+i
-                    +" Time: "+dateFormatter.format(new Date()) +"\n");
-        }
-
         document.add(headerParagraph);
-        document.add(pdfParagraph);
+
+        Paragraph infoParagraph = new Paragraph();
+        infoParagraph.setFont(fontParagraph);
+        infoParagraph.add("\nHọ và tên: " + employeeName + "\n\n");
+        infoParagraph.add("Ngày xuất báo cáo: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()) + "\n\n");
+
+        // Report Content
+        infoParagraph.add(new Chunk("Nội dung: \n\n",fontBold));
+        infoParagraph.add(" - Tổng doanh thu trên hóa đơn năm 2024: " + String.format("%.2f", totalRevenue) + " VND\n\n");
+        infoParagraph.add(" - Tổng số khóa học đã bán: " + totalCourseSold + " khóa học\n\n");
+
+        document.add(infoParagraph);
+
+        // Declaration
+        Paragraph declarationParagraph = new Paragraph("Tôi xin cam kết và chịu trách nhiệm với báo cáo thống kê này!\n\n ", fontParagraph);
+        declarationParagraph.setAlignment(Paragraph.ALIGN_LEFT);
+
+        Paragraph signParagraph = new Paragraph("Người lập\n" + employeeName,fontBold);
+        signParagraph.setAlignment(Paragraph.ALIGN_RIGHT);
+        signParagraph.setIndentationRight(100);
+        document.add(declarationParagraph);
+        document.add(signParagraph);
+
         document.close();
     }
+
+
 }
+

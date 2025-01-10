@@ -46,7 +46,7 @@ public class LanguageService implements LanguageServiceImpl{
     public Language update(Integer id, LanguageDTO languageDTO) {
         Language existsLanguage = getLanguageById(id);
         existsLanguage.setName(languageDTO.getName());
-        existsLanguage.setDescription(existsLanguage.getDescription());
+        existsLanguage.setDescription(languageDTO.getDescription());
 
         languageRepository.save(existsLanguage);
         return existsLanguage;

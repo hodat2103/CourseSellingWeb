@@ -55,10 +55,9 @@ public class UserService implements UserServiceImpl {
 
     @Override
     public Optional<User> getById(int id) throws DataNotFoundException {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException(MessageKeys.NOT_FOUND + id));
+        Optional<User> user = userRepository.findById(id);
 
-        return Optional.ofNullable(user);
+        return user;
     }
 
     @Override

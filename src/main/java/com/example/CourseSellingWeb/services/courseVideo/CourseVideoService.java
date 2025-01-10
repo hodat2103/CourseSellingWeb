@@ -92,6 +92,12 @@ public class CourseVideoService implements CourseVideoServiceImpl{
                 .orElseThrow(() -> new DataNotFoundException("Not found course video with id: " + courseVideoId));
     }
 
+    @Override
+    public int countVideosByCourseId(int courseId) {
+        return courseVideoRepository.countByCourseId(courseId);
+
+    }
+
 
     public Map<String, Object> uploadFile(MultipartFile multipartFile) throws IOException {
         //        return cloudinary.uploader()

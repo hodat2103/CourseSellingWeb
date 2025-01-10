@@ -1,9 +1,12 @@
 package com.example.CourseSellingWeb.controllers;
 
 import com.example.CourseSellingWeb.components.LocalizationUtils;
+import com.example.CourseSellingWeb.dtos.MentorDTO;
 import com.example.CourseSellingWeb.dtos.UserDTO;
 import com.example.CourseSellingWeb.exceptions.DataNotFoundException;
+import com.example.CourseSellingWeb.models.Mentor;
 import com.example.CourseSellingWeb.models.User;
+import com.example.CourseSellingWeb.responses.MentorResponse;
 import com.example.CourseSellingWeb.responses.ResponseObject;
 import com.example.CourseSellingWeb.responses.user.UserListResponse;
 import com.example.CourseSellingWeb.responses.user.UserResponse;
@@ -75,7 +78,26 @@ public class UserController {
     public ResponseEntity<ResponseObject> getById(@PathVariable int id){
         try{
             Optional<User> userResponse = userService.getById(id);
-            if(userResponse.isPresent()){
+            if(!userResponse.isPresent()){
+                throw new DataNotFoundException(MessageKeys.NOT_FOUND + id);
+            }
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .data(UserResponse.fromUser(userResponse.get()))
+                    .status(HttpStatus.OK)
+                    .build());
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message(localizationUtils.
+                            getLocalizationMessage(String.join(";")+ e.getMessage()))
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        }
+    }
+    @GetMapping("/account/{id}")
+    public ResponseEntity<ResponseObject> getByAccountId(@PathVariable int id){
+        try{
+            Optional<User> userResponse = userService.getByAccountId(id);
+            if(!userResponse.isPresent()){
                 throw new DataNotFoundException(MessageKeys.NOT_FOUND + id);
             }
             return ResponseEntity.ok(ResponseObject.builder()
@@ -86,6 +108,24 @@ public class UserController {
             return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .message(localizationUtils.
                             getLocalizationMessage(String.join(";")+ e.getMessage()))
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        }
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseObject> update(@PathVariable int id,
+                                                 @RequestBody UserDTO userDTO){
+        try{
+            User user = userService.update(id, userDTO);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .message(localizationUtils.getLocalizationMessage(MessageKeys.UPDATE_SUCCESSFULLY))
+                    .data(UserResponse.fromUser(user))
+                    .status(HttpStatus.OK)
+                    .build());
+        }catch (Exception e){
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .message(localizationUtils
+                            .getLocalizationMessage(MessageKeys.UPDATE_FAILED + String.join(";", e.getMessage())))
                     .status(HttpStatus.BAD_REQUEST)
                     .build());
         }

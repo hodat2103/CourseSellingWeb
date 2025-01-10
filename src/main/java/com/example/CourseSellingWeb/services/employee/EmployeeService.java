@@ -6,6 +6,7 @@ import com.example.CourseSellingWeb.exceptions.InvalidParamException;
 import com.example.CourseSellingWeb.models.Account;
 import com.example.CourseSellingWeb.models.Employee;
 import com.example.CourseSellingWeb.models.Role;
+import com.example.CourseSellingWeb.models.User;
 import com.example.CourseSellingWeb.respositories.AccountRepository;
 import com.example.CourseSellingWeb.respositories.EmployeeRepository;
 import com.example.CourseSellingWeb.respositories.RoleRepository;
@@ -86,6 +87,12 @@ public class EmployeeService implements EmployeeServiceImpl {
     @Override
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
+    }
+
+    @Override
+    public Optional<Employee> getByAccountId(int accountId) throws DataNotFoundException {
+        Employee employee = employeeRepository.findByAccountId(accountId);
+        return Optional.ofNullable(employee);
     }
 
     @Override

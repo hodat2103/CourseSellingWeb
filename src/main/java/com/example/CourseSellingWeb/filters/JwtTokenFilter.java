@@ -87,51 +87,49 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private boolean isBypassToken(@NonNull HttpServletRequest request) {
         final List<Pair<String, String>> bypassTokens = Arrays.asList(
+                Pair.of(String.format("%s/course_videos/uploadVideo**", apiPrefix), "POST"),
+
+                Pair.of(String.format("%s/fields", apiPrefix), "GET"),
+                Pair.of(String.format("%s/fields**", apiPrefix), "GET"),
+                Pair.of(String.format("%s/mentors/all",apiPrefix),"GET"),
+                Pair.of(String.format("%s/mentors/",apiPrefix),"GET"),
+
                 Pair.of(String.format("%s/courses/discounts", apiPrefix), "GET"),
+                Pair.of(String.format("%s/image_detail/**", apiPrefix), "GET"),
                 Pair.of(String.format("%s/courses", apiPrefix), "GET"),
                 Pair.of(String.format("%s/excel/export/**", apiPrefix), "GET"),
-
                 Pair.of(String.format("%s/roles", apiPrefix), "GET"),
                 Pair.of(String.format("%s/accounts/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/accounts/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/health_check", apiPrefix), "GET"),
                 Pair.of(String.format("%s/courses/**", apiPrefix), "GET"),
-
-
                 Pair.of(String.format("%s/courses/videos**", apiPrefix), "GET"),
-
-                Pair.of(String.format("%s/course_videos/uploadVideo", apiPrefix), "POST"),
                 Pair.of(String.format("%s/employees**", apiPrefix), "GET"),
                 Pair.of(String.format("%s/mentors**", apiPrefix), "GET"),
                 Pair.of(String.format("%s/blogs", apiPrefix), "GET"),
+                Pair.of(String.format("%s/blogs/**", apiPrefix), "GET"),
                 Pair.of(String.format("%s/sliders", apiPrefix), "GET"),
+                Pair.of(String.format("%s/languages", apiPrefix), "GET"),
+                Pair.of(String.format("%s/languages/**", apiPrefix), "GET"),
+
                 Pair.of(String.format("%s/coupons", apiPrefix), "GET"),
                 Pair.of(String.format("%s/coupon_conditions**", apiPrefix), "GET")
-
-
-                );
+        );
 
         String requestPath = request.getServletPath();
         String requestMethod = request.getMethod();
 
-
-//        if (requestPath.equals(String.format("%s/orders", apiPrefix)) && requestMethod.equals("GET")) {
-//            //allow access to .....
-//            return true;
-//        }
-
-        logger.debug("Request Path: {}", requestPath);
-        logger.debug("Request Method: {}", requestMethod);
+//        logger.debug("Request Path: {}", requestPath);
+//        logger.debug("Request Method: {}", requestMethod);
 
         for (Pair<String, String> bypassToken : bypassTokens) {
-            logger.debug("Checking bypassToken: {} {}", bypassToken.getFirst(), bypassToken.getSecond());
-            if (requestPath.contains(bypassToken.getFirst()) &&
-                    requestMethod.equals(bypassToken.getSecond())) {
-                logger.debug("Bypass token matched for request: {}", requestPath);
+//            logger.debug("Checking bypassToken: {} {}", bypassToken.getFirst(), bypassToken.getSecond());
+            if (requestPath.contains(bypassToken.getFirst()) && requestMethod.equals(bypassToken.getSecond())) {
+//                logger.debug("Bypass token matched for request: {}", requestPath);
                 return true;
             }
         }
-        logger.debug("No bypass token matched for request: {}", requestPath);
+//        logger.debug("No bypass token matched for request: {}", requestPath);
         return false;
     }
 }

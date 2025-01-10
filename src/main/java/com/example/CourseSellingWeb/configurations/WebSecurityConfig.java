@@ -38,6 +38,9 @@ public class WebSecurityConfig {
 
             Pair.of(String.format("%s/employees/**", apiPrefix), HttpMethod.DELETE),
 
+            Pair.of(String.format("%s/accounts", apiPrefix), HttpMethod.GET),
+            Pair.of(String.format("%s/accounts/block/**", apiPrefix), HttpMethod.PUT),
+            Pair.of(String.format("%s/accounts/unblock/**", apiPrefix), HttpMethod.PUT),
             Pair.of(String.format("%s/accounts/**", apiPrefix), HttpMethod.DELETE),
             Pair.of(String.format("%s/accounts/**", apiPrefix), HttpMethod.PUT),
 
@@ -64,7 +67,12 @@ public class WebSecurityConfig {
             Pair.of(String.format("%s/statistics/**", apiPrefix), HttpMethod.POST),
 
             Pair.of(String.format("%s/employees/**", apiPrefix), HttpMethod.POST),
-            Pair.of(String.format("%s/employees/**", apiPrefix), HttpMethod.PUT)
+            Pair.of(String.format("%s/employees/**", apiPrefix), HttpMethod.PUT),
+
+            Pair.of(String.format("%s/excel/export/**", apiPrefix), HttpMethod.GET),
+
+            Pair.of(String.format("%s/pdf/export", apiPrefix), HttpMethod.GET)
+
 
     );
     private final List<Pair<String, HttpMethod>> noByPassTokenTechnical = List.of(
@@ -103,17 +111,24 @@ public class WebSecurityConfig {
 
             Pair.of(String.format("%s/sliders/**", apiPrefix), HttpMethod.POST),
             Pair.of(String.format("%s/sliders/**", apiPrefix), HttpMethod.PUT),
-            Pair.of(String.format("%s/sliders/**", apiPrefix), HttpMethod.DELETE)
+            Pair.of(String.format("%s/sliders/**", apiPrefix), HttpMethod.DELETE),
+
+            Pair.of(String.format("%s/course_videos/uploadVideo**", apiPrefix), HttpMethod.POST)
 
 
     );
 
     private final List<Pair<String, HttpMethod>> noByPassTokenUser = List.of(
             Pair.of(String.format("%s/users/reset-password/**", apiPrefix), HttpMethod.PUT),
-            Pair.of(String.format("%s/order/**", apiPrefix), HttpMethod.POST)
+            Pair.of(String.format("%s/order/**", apiPrefix), HttpMethod.POST),
+            Pair.of(String.format("%s/user_course", apiPrefix), HttpMethod.POST),
+            Pair.of(String.format("%s/user_course/**", apiPrefix), HttpMethod.GET)
+
+
 
     );
     private final List<Pair<String, HttpMethod>> bypassTokens = List.of(
+            Pair.of(String.format("%s/image_detail/**", apiPrefix), HttpMethod.GET),
             Pair.of(String.format("%s/courses/discounts", apiPrefix), HttpMethod.GET),
             Pair.of(String.format("%s/roles", apiPrefix), HttpMethod.GET),
             Pair.of(String.format("%s/accounts/register", apiPrefix), HttpMethod.POST),
@@ -139,12 +154,25 @@ public class WebSecurityConfig {
                 .authorizeRequests(requests -> {
                     requests.requestMatchers(
                             String.format("%s/accounts/register", apiPrefix),
-                            String.format("%s/accounts/login", apiPrefix)
+                            String.format("%s/accounts/login", apiPrefix),
+                            String.format("%s/accounts/details", apiPrefix)
                     ).permitAll();
                     requests.requestMatchers(
                             String.format("%s/courses/**",apiPrefix),
-                            String.format("%s/excel/export/**",apiPrefix)
-                            ).permitAll();
+                            String.format("%s/courses",apiPrefix),
+                            String.format("%s/image_detail/**",apiPrefix),
+                            String.format("%s/languages",apiPrefix),
+                            String.format("%s/languages/**",apiPrefix),
+                            String.format("%s/fields",apiPrefix),
+                            String.format("%s/fields/**",apiPrefix),
+                            String.format("%s/mentors/all",apiPrefix),
+                            String.format("%s/mentors/**",apiPrefix),
+                            String.format("%s/blogs",apiPrefix),
+                            String.format("%s/blogs/**",apiPrefix)
+
+
+
+                    ).permitAll();
                     //Public access (permit all)
                     bypassTokens.forEach(api ->
                             requests.requestMatchers(api.getSecond(), api.getFirst()).permitAll());

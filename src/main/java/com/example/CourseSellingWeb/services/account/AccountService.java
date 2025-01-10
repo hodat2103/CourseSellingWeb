@@ -131,6 +131,28 @@ public class AccountService implements AccountServiceImpl {
     }
 
     @Override
+    public void blockAccount(int accountId) throws DataNotFoundException {
+        Optional<Account> accountOptional = accountRepository.findById(accountId);
+        if (accountOptional.isEmpty()) {
+            throw new DataNotFoundException(localizationUtils.getLocalizationMessage(MessageKeys.NOT_FOUND) + accountId);
+        }
+        accountOptional.get().setActive(false);
+
+        accountRepository.save(accountOptional.get());
+    }
+
+    @Override
+    public void unblockAccount(int accountId) throws DataNotFoundException {
+        Optional<Account> accountOptional = accountRepository.findById(accountId);
+        if (accountOptional.isEmpty()) {
+            throw new DataNotFoundException(localizationUtils.getLocalizationMessage(MessageKeys.NOT_FOUND) + accountId);
+        }
+        accountOptional.get().setActive(true);
+
+        accountRepository.save(accountOptional.get());
+    }
+
+    @Override
     public List<Account> getAll() {
         return accountRepository.findAll();
     }

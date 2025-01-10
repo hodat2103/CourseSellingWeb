@@ -25,6 +25,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("${api.prefix}/employees")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class EmployeeController {
     private final EmployeeServiceImpl employeeService;
     private final LocalizationUtils localizationUtils;
@@ -83,7 +85,25 @@ public class EmployeeController {
                     .status(HttpStatus.BAD_REQUEST)
                     .build());        }
     }
-
+    @GetMapping("/account/{id}")
+    public ResponseEntity<ResponseObject> getByAccountId(@PathVariable int id){
+        try{
+            Optional<Employee> employeeResponse = employeeService.getByAccountId(id);
+            if(!employeeResponse.isPresent()){
+                throw new DataNotFoundException(MessageKeys.NOT_FOUND + id);
+            }
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .data(EmployeeResponse.fromEmployee(employeeResponse.get()))
+                    .status(HttpStatus.OK)
+                    .build());
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message(localizationUtils.
+                            getLocalizationMessage(String.join(";")+ e.getMessage()))
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        }
+    }
     @GetMapping("/by_role_id/{role_id}")
     public ResponseEntity<?> getEmployeesByRoleId(@PathVariable("role_id")  int id){
         try {

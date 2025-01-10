@@ -21,6 +21,8 @@ public interface EmployeeServiceImpl {
 
     List<Employee> getAllEmployees();
 
+    Optional<Employee> getByAccountId(int accountId) throws DataNotFoundException;
+
     void delete(int employeeId) throws DataNotFoundException;
 
 }

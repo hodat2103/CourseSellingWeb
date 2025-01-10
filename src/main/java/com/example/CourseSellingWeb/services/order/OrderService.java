@@ -1,7 +1,9 @@
 package com.example.CourseSellingWeb.services.order;
 
 import com.example.CourseSellingWeb.dtos.OrderDTO;
+import com.example.CourseSellingWeb.dtos.UserCourseDTO;
 import com.example.CourseSellingWeb.exceptions.DataNotFoundException;
+import com.example.CourseSellingWeb.exceptions.InvalidParamException;
 import com.example.CourseSellingWeb.models.*;
 import com.example.CourseSellingWeb.respositories.OrderDetailRepository;
 import com.example.CourseSellingWeb.respositories.OrderRepository;
@@ -9,6 +11,7 @@ import com.example.CourseSellingWeb.services.coupon.CouponServiceImpl;
 import com.example.CourseSellingWeb.services.course.CourseServiceImpl;
 import com.example.CourseSellingWeb.services.employee.EmployeeServiceImpl;
 import com.example.CourseSellingWeb.services.user.UserServiceImpl;
+import com.example.CourseSellingWeb.services.user_course.UserCourseServiceImpl;
 import com.example.CourseSellingWeb.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,8 +31,9 @@ public class OrderService implements OrderServiceImpl{
     private final CourseServiceImpl courseService;
     private final CouponServiceImpl couponService;
     private final EmployeeServiceImpl employeeService;
+    private final UserCourseServiceImpl userCourseService;
     private final OrderDetailRepository orderDetailRepository;
-    public Order create(OrderDTO orderDTO) throws DataNotFoundException {
+    public Order create(OrderDTO orderDTO) throws DataNotFoundException, InvalidParamException {
         User existsUser = userService.getById(orderDTO.getUserId())
                 .orElseThrow(() -> new DataNotFoundException(MessageKeys.NOT_FOUND + orderDTO.getUserId()));
         Employee existsEmployee = employeeService.getEmployeeById(orderDTO.getEmployeeId())
@@ -87,6 +91,10 @@ public class OrderService implements OrderServiceImpl{
         order.setFinalPrice(finalPrice);
 
         orderRepository.save(order);
+        UserCourseDTO userCourseDTO = new UserCourseDTO();
+        userCourseDTO.setUserId(orderDTO.getUserId());
+        userCourseDTO.setCourseId(orderDetail.getCourse().getId());
+        userCourseService.addUserCourse(userCourseDTO);
 
         return order;
     }

@@ -3,6 +3,7 @@ package com.example.CourseSellingWeb.controllers;
 import com.example.CourseSellingWeb.components.LocalizationUtils;
 import com.example.CourseSellingWeb.dtos.OrderDTO;
 import com.example.CourseSellingWeb.exceptions.DataNotFoundException;
+import com.example.CourseSellingWeb.exceptions.InvalidParamException;
 import com.example.CourseSellingWeb.models.Order;
 import com.example.CourseSellingWeb.responses.order.OrderListResponse;
 import com.example.CourseSellingWeb.responses.order.OrderResponse;
@@ -38,7 +39,7 @@ public class OrderController {
 
     @PostMapping("")
     public ResponseEntity<ResponseObject> create(@Valid @RequestBody OrderDTO orderDTO,
-                                                 BindingResult result) throws DataNotFoundException {
+                                                 BindingResult result) throws DataNotFoundException, InvalidParamException {
         if(result.hasErrors()){
             List<String> errorMessage = result.getFieldErrors()
                     .stream()

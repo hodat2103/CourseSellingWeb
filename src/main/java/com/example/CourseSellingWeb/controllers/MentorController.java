@@ -27,6 +27,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("${api.prefix}/mentors")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class MentorController {
     private final MentorServiceImpl mentorService;
     private final LocalizationUtils localizationUtils;
@@ -72,9 +74,7 @@ public class MentorController {
         try {
             Optional<Mentor> mentorOptional = mentorService.getById(id);
             return ResponseEntity.ok(ResponseObject.builder()
-                            .data(mentorOptional
-                                    .map(ResponseEntity::ok)
-                                    .orElseThrow(() -> new DataNotFoundException(localizationUtils.getLocalizationMessage(MessageKeys.NOT_FOUND))))
+                            .data(mentorOptional.get())
                             .status(HttpStatus.OK)
                     .build());
         }catch (Exception e){

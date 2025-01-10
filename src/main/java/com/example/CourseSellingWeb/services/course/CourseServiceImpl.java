@@ -3,6 +3,7 @@ package com.example.CourseSellingWeb.services.course;
 import com.example.CourseSellingWeb.dtos.CourseDTO;
 import com.example.CourseSellingWeb.dtos.CourseDiscountDTO;
 import com.example.CourseSellingWeb.exceptions.DataNotFoundException;
+import com.example.CourseSellingWeb.exceptions.InvalidParamException;
 import com.example.CourseSellingWeb.models.Course;
 import com.example.CourseSellingWeb.responses.course.CourseResponse;
 import org.springframework.data.domain.Page;
@@ -17,11 +18,11 @@ import java.util.Map;
 
 @Service
 public interface CourseServiceImpl {
-    Course create(CourseDTO courseDTO, MultipartFile fileVideo) throws DataNotFoundException, IOException;
+    Course create(CourseDTO courseDTO, MultipartFile fileVideo) throws DataNotFoundException, IOException, InvalidParamException;
 
     Course getCourseById(Integer id) throws DataNotFoundException;
 
-    Course update(Integer id, CourseDTO courseDTO, MultipartFile videoFile) throws DataNotFoundException, IOException;
+    Course update(Integer id, CourseDTO courseDTO, MultipartFile videoFile) throws DataNotFoundException, IOException, InvalidParamException;
 
     void delete(Integer id);
 

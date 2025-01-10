@@ -1,6 +1,8 @@
 package com.example.CourseSellingWeb.services.excel;
 
+import com.example.CourseSellingWeb.components.LocalizationUtils;
 import com.example.CourseSellingWeb.models.ExcelExportable;
+import com.example.CourseSellingWeb.utils.MessageKeys;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +17,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ExcelService implements ExcelServiceImpl {
+    private final LocalizationUtils localizationUtils;
     public void exportToExcel(List<? extends ExcelExportable> dataList, String fileName, HttpServletResponse response) {
         if (dataList == null || dataList.isEmpty()) {
-            throw new IllegalArgumentException("Data list cannot be null or empty.");
+            throw new IllegalArgumentException(localizationUtils.getLocalizationMessage(MessageKeys.LIST_EMPTY));
         }
 
         try (Workbook workbook = new XSSFWorkbook()) {
@@ -47,16 +50,15 @@ public class ExcelService implements ExcelServiceImpl {
             // Write workbook to the response
             try (ServletOutputStream outputStream = response.getOutputStream()) {
                 workbook.write(outputStream);
-                outputStream.flush(); // Ensure all data is written to the output stream
+                outputStream.flush();
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to export data to Excel", e);
+            throw new RuntimeException(localizationUtils.getLocalizationMessage(MessageKeys.EXPORT_EXCEL_FAILED), e);
         }
     }
 
-    // Helper methods to create styles and populate the Excel sheet...
     private CellStyle createHeaderCellStyle(Workbook workbook) {
         CellStyle headerStyle = workbook.createCellStyle();
         Font font = workbook.createFont();

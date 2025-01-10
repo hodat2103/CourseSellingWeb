@@ -25,6 +25,8 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.prefix}/languages")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class LanguageController {
     private final LanguageServiceImpl languageService;
     private final LocalizationUtils localizationUtils;

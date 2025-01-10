@@ -40,6 +40,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("${api.prefix}/blogs")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class BlogController {
     private final BlogServiceImpl blogService;
     private final LocalizationUtils localizationUtils;
@@ -72,47 +73,56 @@ public class BlogController {
                 .status(HttpStatus.OK)
                 .build());
     }
+
+//    @GetMapping("")
+//    public ResponseEntity<ResponseObject> getAllBlogs(@RequestParam(defaultValue = "0", name = "employee_id") int employeeId,
+//                                         @RequestParam(defaultValue = "", name = "date") String dateStr,
+//                                         @RequestParam(defaultValue = "", name = "keyword") String keyword,
+//                                         @RequestParam(defaultValue = "0", name = "page") int page,
+//                                         @RequestParam(defaultValue = "9", name = "limit") int limit){
+//
+//        LocalDateTime startOfDay = null;
+//        LocalDateTime endOfDay = null;
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//
+//        if (!dateStr.isEmpty()) {
+//            try {
+//                LocalDate parsedDate = LocalDate.parse(dateStr, formatter);
+//                // Set start of the day (00:00:00)
+//                startOfDay = parsedDate.atStartOfDay();
+//                // Set end of the day (23:59:59.999)
+//                endOfDay = parsedDate.atTime(LocalTime.MAX);
+//            } catch (DateTimeParseException e) {
+//                return ResponseEntity.badRequest().body(ResponseObject.builder()
+//                        .message("Invalid date format. Please use dd/MM/yyyy.")
+//                        .build());
+//            }
+//        }
+//
+//        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").ascending());
+//
+//        Page<BlogResponse> blogPage = blogService.getAllBlogs(employeeId, startOfDay, endOfDay, keyword, pageRequest);
+//        List<BlogResponse> blogResponses = blogPage.getContent();
+//
+//        if (blogResponses.isEmpty()) {
+//            return ResponseEntity.noContent().build();
+//        }
+//
+//        return ResponseEntity.ok(ResponseObject.builder()
+//                        .data(blogResponses)
+//                        .status(HttpStatus.OK)
+//                .build());
+//    }
     @GetMapping("")
-    public ResponseEntity<ResponseObject> getAllBlogs(@RequestParam(defaultValue = "0", name = "employee_id") int employeeId,
-                                         @RequestParam(defaultValue = "", name = "date") String dateStr,
-                                         @RequestParam(defaultValue = "", name = "keyword") String keyword,
-                                         @RequestParam(defaultValue = "0", name = "page") int page,
-                                         @RequestParam(defaultValue = "9", name = "limit") int limit){
-
-        LocalDateTime startOfDay = null;
-        LocalDateTime endOfDay = null;
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        if (!dateStr.isEmpty()) {
-            try {
-                LocalDate parsedDate = LocalDate.parse(dateStr, formatter);
-                // Set start of the day (00:00:00)
-                startOfDay = parsedDate.atStartOfDay();
-                // Set end of the day (23:59:59.999)
-                endOfDay = parsedDate.atTime(LocalTime.MAX);
-            } catch (DateTimeParseException e) {
-                return ResponseEntity.badRequest().body(ResponseObject.builder()
-                        .message("Invalid date format. Please use dd/MM/yyyy.")
-                        .build());
-            }
-        }
-
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").ascending());
-
-        Page<BlogResponse> blogPage = blogService.getAllBlogs(employeeId, startOfDay, endOfDay, keyword, pageRequest);
-        List<BlogResponse> blogResponses = blogPage.getContent();
-
-        if (blogResponses.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(ResponseObject.builder()
-                        .data(blogResponses)
-                        .status(HttpStatus.OK)
-                .build());
+    public ResponseEntity<ResponseObject> getAllBlogs(){
+       List<Blog> blogs =  blogService.findAll();
+       return ResponseEntity.ok(ResponseObject.builder()
+                       .message("ok")
+                       .data(blogs)
+                       .status(HttpStatus.OK)
+               .build());
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getBlogById(@PathVariable int id){
         try{

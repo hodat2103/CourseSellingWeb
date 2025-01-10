@@ -25,6 +25,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("${api.prefix}/coupons")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class CouponController {
     private final CouponServiceImpl couponService;
     private final LocalizationUtils localizationUtils;

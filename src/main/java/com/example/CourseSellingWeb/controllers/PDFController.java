@@ -1,6 +1,7 @@
-package com.example.CourseSellingWeb.configurations;
+package com.example.CourseSellingWeb.controllers;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,6 +34,6 @@ public class PDFController {
         String headerValue = "attachment; filename=pdf_" + currentDateTime + ".pdf";
         response.setHeader(headerKey, headerValue);
 
-        pdfService.exportToPdf(response);
+        pdfService.exportToPdf(response,"Hồ Bá Đạt", BigDecimal.valueOf(1982760000.00),307);
     }
 }

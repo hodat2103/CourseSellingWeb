@@ -35,7 +35,7 @@ public class JwtTokenUtils {
         try {
             String token = Jwts.builder()
                     .setClaims(claims)
-                    .setSubject(account.getUsername()) // authen user
+                    .setSubject(account.getUsername()) // authentication user
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000L)) //set expiration for token
                     .signWith(getSecretInKey(), SignatureAlgorithm.HS256) //sign token bay secretKey & algorithm HS256

@@ -1,6 +1,7 @@
 package com.example.CourseSellingWeb.services.course;
 
 import com.cloudinary.utils.ObjectUtils;
+import com.example.CourseSellingWeb.components.LocalizationUtils;
 import com.example.CourseSellingWeb.configurations.CloudinaryConfig;
 import com.example.CourseSellingWeb.configurations.ImageConfig;
 import com.example.CourseSellingWeb.dtos.CourseDTO;
@@ -12,6 +13,7 @@ import com.example.CourseSellingWeb.responses.course.CourseResponse;
 import com.example.CourseSellingWeb.respositories.*;
 import com.example.CourseSellingWeb.services.courseVideo.CourseVideoService;
 import com.example.CourseSellingWeb.utils.ConstantKeys;
+import com.example.CourseSellingWeb.utils.MessageKeys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,28 +33,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class CourseService implements CourseServiceImpl{
-    @Autowired
     private final CourseRepository courseRepository;
-    @Autowired
     private final FieldRepository fieldRepository;
-    @Autowired
     private final LanguageRepository languageRepository;
-    @Autowired
     private final EmployeeRepository employeeRepository;
-    @Autowired
     private final MentorRepository mentorRepository;
-
-    @Autowired
     private final CloudinaryConfig cloudinaryConfig;
-
     private final ImageConfig imageConfig;
-
-
-    @Autowired
     private final CourseVideoService courseVideoService;
+    private final LocalizationUtils localizationUtils;
 
     @Override
-    public Course create(CourseDTO courseDTO, MultipartFile videoFile) throws DataNotFoundException, IOException {
+    public Course create(CourseDTO courseDTO, MultipartFile videoFile) throws DataNotFoundException, IOException, InvalidParamException {
         Field existsField = fieldRepository.findById(courseDTO.getFieldId())
                 .orElseThrow(() ->
                         new DataNotFoundException("Cannot find field with id: " + courseDTO.getFieldId()));
@@ -63,9 +55,13 @@ public class CourseService implements CourseServiceImpl{
                 .orElseThrow(() -> new DataNotFoundException("Not found employee with: " + courseDTO.getEmployeeId()));
         Mentor existsMentor = mentorRepository.findById(courseDTO.getMentorId())
                 .orElseThrow(() -> new DataNotFoundException("Not found mentor with id: " + courseDTO.getMentorId()));
-        boolean existsUrl = courseRepository.existsByDemoVideoUrl(courseDTO.getDemoVideoUrl());
+//        String uniqueFileName = ConstantKeys.UNIQUE_FILE_NAME + courseDTO.getImageUrl();
 
-        String uniqueFileName = ConstantKeys.UNIQUE_FILE_NAME + courseDTO.getImageUrl();
+        boolean existsUrl = courseRepository.existsByDemoVideoUrl(courseDTO.getDemoVideoUrl());
+//        Map result = imageConfig.uploadImageFile(imageFile,uniqueFileName);
+//        if(result.isEmpty()){
+//            throw new InvalidParamException(localizationUtils.getLocalizationMessage(MessageKeys.NOT_IMAGE));
+//        }
         String url = courseDTO.getDemoVideoUrl();
         if(courseDTO.getVideoType().equals("cloudinary")){
             Map<String, Object> uploadResult = courseVideoService.uploadFile(videoFile);
@@ -80,7 +76,7 @@ public class CourseService implements CourseServiceImpl{
                 .mentor(existsMentor)
                 .description(courseDTO.getDescription())
                 .price(courseDTO.getPrice())
-                .imageUrl(uniqueFileName)
+//                .imageUrl(uniqueFileName)
                 .demoVideoUrl(url)
                 .videoType(courseDTO.getVideoType())
                 .field(existsField)
@@ -98,7 +94,7 @@ public class CourseService implements CourseServiceImpl{
     }
 
     @Override
-    public Course update(Integer id, CourseDTO courseDTO, MultipartFile videoFile) throws DataNotFoundException, IOException {
+    public Course update(Integer id, CourseDTO courseDTO, MultipartFile videoFile) throws DataNotFoundException, IOException, InvalidParamException {
         Course existsCourse = getCourseById(id);
         if(existsCourse != null){
             Field existsField = fieldRepository.findById(courseDTO.getFieldId())
@@ -109,7 +105,11 @@ public class CourseService implements CourseServiceImpl{
                             new DataNotFoundException("Cannot find language with id: " + courseDTO.getLanguageId()));
             Mentor existsMentor = mentorRepository.findById(courseDTO.getMentorId())
                     .orElseThrow(() -> new DataNotFoundException("Cannot find mentor with id: " + courseDTO.getMentorId()));
-            String uniqueFileName = ConstantKeys.UNIQUE_FILE_NAME + courseDTO.getImageUrl();
+//            String uniqueFileName = ConstantKeys.UNIQUE_FILE_NAME + courseDTO.getImageUrl();
+//            Map result = imageConfig.uploadImageFile(imageFile,uniqueFileName);
+//            if(result.isEmpty()){
+//                throw new InvalidParamException(localizationUtils.getLocalizationMessage(MessageKeys.NOT_IMAGE));
+//            }
             String url = courseDTO.getDemoVideoUrl();
 
             if(courseDTO.getVideoType().equals("cloudinary")){
@@ -120,7 +120,7 @@ public class CourseService implements CourseServiceImpl{
             existsCourse.setTitle(courseDTO.getTitle());
             existsCourse.setMentor(existsMentor);
             existsCourse.setDescription(courseDTO.getDescription());
-            existsCourse.setImageUrl(uniqueFileName);
+//            existsCourse.setImageUrl(uniqueFileName);
             existsCourse.setDemoVideoUrl(url);
             existsCourse.setVideoType(courseDTO.getVideoType());
             existsCourse.setPrice(courseDTO.getPrice());

@@ -28,9 +28,9 @@ public class CourseDTO {
     @Min(value=0,message = "Price must be greater than or equal to 0")
     private BigDecimal price;
 
-    @Size(min = 5, max = 200, message = "Url size must be greater 5 and smaller 200 ")
-    @JsonProperty("image_url")
-    private String imageUrl;
+//    @Size(min = 5, max = 200, message = "Url size must be greater 5 and smaller 200 ")
+//    @JsonProperty("image_url")
+//    private String imageUrl;
 
     @Size(min = 5, max = 200, message = "Url size must be greater 5 and smaller 200 ")
     @JsonProperty("demo_video_url")
